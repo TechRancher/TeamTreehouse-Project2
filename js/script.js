@@ -69,7 +69,7 @@ const appendPageLinks = (studentList) => {
 };
 
 showPage(1, students);
-appendPageLinks();
+appendPageLinks(students);
 
 
 
