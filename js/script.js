@@ -4,7 +4,7 @@ FSJS project 2 - List Filter and Pagination
 ******************************************/
 
 // Add variables that store DOM elements you will need to reference and/or manipulate
-const students = document.getElementsByClassName(".student-item");
+const students = document.querySelectorAll(".student-item");
 const perPage = 10;
 const totalPages = Math.ceil(students.length / perPage);
 const div = document.createElement("div");
@@ -26,7 +26,7 @@ const hideStudents = (studentList) => {
 const showPage = (pageNum, studentList) => {
   hideStudents();
   let endCount = pageNum * perPage;
-  let startCount = endCount - perPage - 1;
+  let startCount = endCount - (perPage - 1);
   for(let i=0; i<studentList.length; i++){
     if(i <= endCount  && i >= startCount) {
       studentList[i].style.display = "block";
@@ -51,17 +51,16 @@ const appendPageLinks = (studentList) => {
     anchorCreate.href = "#";
     anchorCreate.textContent = i + 1;
     liCreate.appendChild(anchorCreate);
-    const activeAnchor = document.querySelector("a");
+    const activeAnchor = document.querySelectorAll("a");
     activeAnchor.className = "active";
-    const activePage = document.querySelector("a");
     // Add functionality to the pagination buttons so that they show and hide the correct items
     // Tip: If you created a function above to show/hide list items, it could be helpful here
     div.addEventListener("click", (event) => {
       event.preventDefault();
       const pageButton = event.target.textContent;
-      showPage(pageButton);
-      for(let i=0; i<activePage.length; i++) {
-        activePage[i].classList.remove("active");
+      showPage(pageButton, studentList);
+      for(let i=0; i<activeAnchor.length; i++) {
+        activeAnchor[i].classList.remove("active");
         event.target.classList.add("active");
       }
     });
@@ -70,11 +69,3 @@ const appendPageLinks = (studentList) => {
 
 showPage(1, students);
 appendPageLinks(students);
-
-
-
-
-
-
-
-
