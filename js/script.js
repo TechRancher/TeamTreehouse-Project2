@@ -65,7 +65,9 @@ const appendPageLinks = (studentList) => {
 };
 
 
-/* Here is my shot at Exceeds Expectations. */
+/* Here is my shot at Exceeds Expectations.
+I have not figured out how to use two listener functions in this code to  call on "click" and 
+"keypress" or "keydown". I would really enjoy feedback on this. I would love to figure this out. */
 const searchOption = (studentList) => {
   const searchDiv = document.createElement("div");
   searchDiv.className = "student-search";
