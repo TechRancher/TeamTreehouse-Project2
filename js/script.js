@@ -10,19 +10,15 @@ const totalPages = Math.ceil(students.length / perPage);
 const div = document.createElement("div");
 
 
-
-
-
-// Create a function to hide all of the items in the list excpet for the ten you want to show
-// Tip: Keep in mind that with a list of 54 studetns, the last page will only display four
-
+// This function will take our studentList and hide it.
 const hideStudents = (studentList) => {
   studentList = students;
   for (let i=0; i<studentList.length; i++){
     studentList[i].style.display = "none";
   }
 }
-
+// This function calls on the hideStudents() and will display the studentList 
+// on to a page broke down to 10 perPage 
 const showPage = (pageNum, studentList) => {
   hideStudents();
   let endCount = pageNum * perPage;
@@ -35,8 +31,11 @@ const showPage = (pageNum, studentList) => {
 }
 
 
-// Create and append the pagination links - Creating a function that can do this is a good approach
-
+// This function will call on the showPage() and will also display 10 students perPage
+// and the left over will be carried to a new page with the remaining students if it is
+// less than 10. This function also creates our pagination for the page by creating 
+// our elements to be displayed. A Listener function is also installed into this function
+// which will change the active button class to represent the active page.
 const appendPageLinks = (studentList) => {
   const pageClass = document.getElementsByClassName("page")[0];
   const div = document.createElement("div");
@@ -52,9 +51,7 @@ const appendPageLinks = (studentList) => {
     anchorCreate.textContent = i + 1;
     liCreate.appendChild(anchorCreate);
     const activeAnchor = document.querySelectorAll("a");
-    activeAnchor.className = "active";
-    // Add functionality to the pagination buttons so that they show and hide the correct items
-    // Tip: If you created a function above to show/hide list items, it could be helpful here
+    activeAnchor[0].className = "active";
     div.addEventListener("click", (event) => {
       event.preventDefault();
       const pageButton = event.target.textContent;
@@ -67,5 +64,37 @@ const appendPageLinks = (studentList) => {
   }
 };
 
+
+/* Here is my shot at Exceeds Expectations. */
+const searchOption = (studentList) => {
+  const searchDiv = document.createElement("div");
+  searchDiv.className = "student-search";
+  const pageHeader = document.querySelector(".page-header");
+  pageHeader.appendChild(searchDiv);
+  const searchField = document.createElement("input");
+  searchField.setAttribute("placeholder", "Search for Student");
+  searchDiv.appendChild(searchField);
+  const searchButton = document.createElement("button");
+  searchButton.textContent = "Search";
+  searchDiv.appendChild(searchButton);
+  const paginationClass = document.querySelector(".pagination");
+  searchButton.addEventListener("click", (event) => {
+    event.preventDefault();
+    paginationClass.remove();
+    const studentValue = searchField.value.toLowerCase();
+    searchField.value = "";
+    for (let i=0; i<students.length; i++){
+      const studentName = document.querySelectorAll("h3")[i].textContent;
+      if(studentName.indexOf(studentValue)> -1) {
+        students[i].style.display = "";
+      } else {
+        students[i].style.display = "none";
+      }
+    }
+  });
+}
+
+// Calling the functions
 showPage(1, students);
 appendPageLinks(students);
+searchOption(students);
