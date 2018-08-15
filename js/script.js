@@ -92,7 +92,12 @@ const searchOption = (studentList) => {
       }
     }
   });
+  // searchButton.addEventListener("click", (event) => {
+  //   event = searchField();
+  // });
 }
+
+
 
 // Calling the functions
 showPage(1, students);
