@@ -21,8 +21,8 @@ const hideStudents = (studentList) => {
 // on to a page broke down to 10 perPage 
 const showPage = (pageNum, studentList) => {
   hideStudents();
-  let endCount = pageNum * perPage;
-  let startCount = endCount - (perPage - 1);
+  let startCount = (pageNum - 1) * perPage;
+  let endCount = (startCount + perPage)> students.length ? students.length : startCount + perPage;
   for(let i=0; i<studentList.length; i++){
     if(i <= endCount  && i >= startCount) {
       studentList[i].style.display = "block";
@@ -37,7 +37,7 @@ const showPage = (pageNum, studentList) => {
 // our elements to be displayed. A Listener function is also installed into this function
 // which will change the active button class to represent the active page.
 const appendPageLinks = (studentList) => {
-  const pageClass = document.getElementsByClassName("page")[0];
+  const pageClass = document.querySelector(".page");
   const div = document.createElement("div");
   div.className = "pagination";
   pageClass.appendChild(div);
@@ -68,7 +68,7 @@ const appendPageLinks = (studentList) => {
 /* Here is my shot at Exceeds Expectations.
 I have not figured out how to use two listener functions in this code to  call on "click" and 
 "keypress" or "keydown". I would really enjoy feedback on this. I would love to figure this out. */
-const searchOption = (studentList) => {
+const searchOption = () => {
   const searchDiv = document.createElement("div");
   searchDiv.className = "student-search";
   const pageHeader = document.querySelector(".page-header");
@@ -79,29 +79,29 @@ const searchOption = (studentList) => {
   const searchButton = document.createElement("button");
   searchButton.textContent = "Search";
   searchDiv.appendChild(searchButton);
-  const paginationClass = document.querySelector(".pagination");
-  searchButton.addEventListener("click", (event) => {
-    event.preventDefault();
-    paginationClass.remove();
-    const studentValue = searchField.value.toLowerCase();
-    searchField.value = "";
-    for (let i=0; i<students.length; i++){
-      const studentName = document.querySelectorAll("h3")[i].textContent;
-      if(studentName.indexOf(studentValue)> -1) {
-        students[i].style.display = "";
-      } else {
-        students[i].style.display = "none";
-      }
-    }
-  });
-  // searchButton.addEventListener("click", (event) => {
-  //   event = searchField();
-  // });
-}
-
-
+};
 
 // Calling the functions
 showPage(1, students);
 appendPageLinks(students);
 searchOption(students);
+
+searchButton.addEventListener("click", (event) => {
+  const paginationClass = document.querySelector(".pagination");
+  event.preventDefault();
+  paginationClass.classList.remove();
+  const studentValue = searchField.value.toLowerCase();
+  searchField.value = "";
+  for (let i = 0; i < students.length; i++) {
+    const studentName = document.querySelectorAll("h3")[i].textContent;
+    if (studentName.indexOf(studentValue) > 0) {
+      students[i].style.display = "";
+    } else {
+      students[i].style.display = "none";
+    }
+  }
+});
+
+
+
+
