@@ -9,7 +9,6 @@ const perPage = 10;
 const totalPages = Math.ceil(students.length / perPage);
 const div = document.createElement("div");
 const pageClass = document.querySelector(".page");
-
 const pageHeader = document.querySelector(".page-header");
 let searchArray = students;
 
@@ -30,10 +29,10 @@ const showPage = (pageNum) => {
     const startCount = (pageNum -1) * perPage;
     const endCount = (startCount + perPage) > students.length ? students.length : startCount + perPage;
     for(let i=startCount; i<endCount; i++){
-      students[i].style.display = "block";
+      students[i].style.display = "list-item";
     }
   } else {
-    noResults();
+    noResultsShow();
   }
 };
 
@@ -81,6 +80,7 @@ const searchElements = () => {
   pageHeader.appendChild(searchDiv);
   const searchField = document.createElement("input");
   searchField.setAttribute("placeholder", "Search for Student");
+  searchField.setAttribute("id", "search-input");
   searchDiv.appendChild(searchField);
   const searchButton = document.createElement("button");
   searchButton.textContent = "Search";
@@ -96,6 +96,13 @@ const noResults = () => {
   pageClass.appendChild(divNoResults);
 };
 
+const noResultsShow = () => {
+  document.querySelector(".search-no-results").style.display = "block";
+};
+
+const noResultsHide = () => {
+  document.querySelector(".search-no-results").style.display = "none";
+};
 
 // The function for the search
 const search = (searchValue = " ") => {
@@ -103,12 +110,15 @@ const search = (searchValue = " ") => {
     searchArray = [];
     for (let i=0; i<students.length; i++){
       const studentFilterName = (students[i].querySelector("h3").innerText.toLowerCase().indexOf(searchValue.toLowerCase()) > -1);
-      searchArray.push(students[i]);
+      if(studentFilterName){
+        searchArray.push(students[i]);
+      }
     }
   } else {
     searchArray = students;
   }
-  // showPage(1);
+  console.log(searchValue);
+  showPage(1);
   // appendPageLinks();
 };
 
@@ -119,7 +129,9 @@ const resetSearch = () => {
 
 // Add an eventListener to handle the click event on the search button.
 pageHeader.addEventListener("click", (event) => {
-  search(event.target.inputValue);
+  if(event.target && event.target.nodeName == "BUTTON"){
+    search(event.target.inputValue);
+  }
 });
 
 // Add an eventListener to handle the keyup event on the search form.
@@ -139,6 +151,7 @@ pageClass.addEventListener("click", (event) => {
 // Calling the functions
 showPage(1);
 appendPageLinks();
+noResults();
 searchElements();
 
 
