@@ -3,64 +3,88 @@ Treehouse Techdegree:
 FSJS project 2 - List Filter and Pagination
 ******************************************/
 
-// Add variables that store DOM elements you will need to reference and/or manipulate
-const students = document.querySelectorAll(".student-item");
+const students = document.querySelectorAll('.student-item');
+const pageElement = document.querySelector('.page');
+const pageHeader = document.querySelector('.page-header');
+const divElement = document.createElement('div');
 const perPage = 10;
-const totalPages = Math.ceil(students.length / perPage);
-const div = document.createElement("div");
-const pageClass = document.querySelector(".page");
-const pageHeader = document.querySelector(".page-header");
-let searchArray = students;
+let searchResult = students;
 
 
-// This function will take our studentList and hide it.
-const hideStudents = (studentList) => {
-  studentList = students;
-  for (let i=0; i<studentList.length; i++){
-    studentList[i].style.display = "none";
+
+// Create a function to hide all the students.
+const hideStudents = () => {
+  for (let i = 0; i < students.length; i++) {
+    students[i].style.display = 'none';
   }
 };
 
-// This function calls on the hideStudents() and will display the studentList 
-// on to a page broke down to 10 perPage 
+/* This function calls on the hideStudents() and will display the studentList 
+onto a page broke down to 10 perPage */
 const showPage = (pageNum) => {
   hideStudents();
-  if(students.length > 0){
-    const startCount = (pageNum -1) * perPage;
-    const endCount = (startCount + perPage) > students.length ? students.length : startCount + perPage;
-    for(let i=startCount; i<endCount; i++){
-      students[i].style.display = "list-item";
+  noSearchResultsHide();
+
+  if (searchResult.length > 0) {
+    const startCount = (pageNum - 1) * perPage;
+    const endCount = (startCount + perPage) > searchResult.length ? searchResult.length : startCount + perPage;
+
+    for (let i = startCount; i < endCount; i++) {
+      searchResult[i].style.display = 'list-item';;
     }
   } else {
-    noResultsShow();
+    noSearchResultsShow();
   }
 };
 
+/* This function is for the search. It takes in the value of the search form and looks for a match
+in the student's name which is an h3 element. If there is a match it will then push it into an array then 
+the array will be displayed. */
+const search = (searchValue = '') => {
+  if (searchValue !== '') {
+    searchResult = [];
+    for (let i = 0; i < students.length; i++) {
+      const studentfilterName = (students[i].querySelector('h3').innerText.toLowerCase().indexOf(searchValue.toLowerCase()) > -1);
+      if (studentfilterName) {
+        searchResult.push(students[i]);
+      }
+    }
+  } else {
+    searchResult = students;
+  }
 
-// This function will call on the showPage() and will also display 10 students perPage
-// and the left over will be carried to a new page with the remaining students if it is
-// less than 10. This function also creates our pagination for the page by creating 
-// our elements to be displayed. A Listener function is also installed into this function
-// which will change the active button class to represent the active page.
+  showPage(1);
+  appendPageLinks();
+};
+
+// This function resets the search form and page to page 1.
+const searchReset = () => {
+  search();
+  document.querySelector('.student-search input').value = '';
+};
+
+// This function creates the pagination links 
 const appendPageLinks = () => {
-  const div = document.createElement("div");
-  div.className = "pagination";
-  pageClass.appendChild(div);
-  const ulCreate = document.createElement("ul");
-  div.appendChild(ulCreate);
-  for(let i=0; i<totalPages; i++){
+  const totalPages = Math.ceil(searchResult.length / perPage);
+  const ulCreate = document.createElement('ul');
+  // this removes the additional page btns durning a search
+  while (divElement.firstChild) {
+    divElement.removeChild(divElement.firstChild);
+  }
+  // loop through the pagebtns
+  for (let i = 1; i <= totalPages; i++) {
     const liCreate = document.createElement("li");
     ulCreate.appendChild(liCreate);
     const anchorCreate = document.createElement("a");
     anchorCreate.href = "#";
-    anchorCreate.textContent = i + 1;
+    anchorCreate.textContent = i;
     liCreate.appendChild(anchorCreate);
-    const activeAnchor = document.querySelectorAll("a");
-    activeAnchor[0].className = "active";
+    const activeAnchor = document.querySelector("liCreate.firstChild");
+
     // Add an eventListener to handle the pageNum Button
-    div.addEventListener("click", (event) => {
-      event.preventDefault();
+    liCreate.addEventListener("click", (event) => {
       const pageButton = event.target.textContent;
+      const activeAnchor = document.querySelectorAll("a");
       showPage(pageButton);
       for (let i = 0; i < activeAnchor.length; i++) {
         activeAnchor[i].classList.remove("active");
@@ -68,92 +92,62 @@ const appendPageLinks = () => {
       }
     });
   }
+  // finish appending the rest of the pagination elements
+  divElement.classList.add('pagination');
+  divElement.appendChild(ulCreate);
+  pageElement.appendChild(divElement);
 };
 
-
-/* Here is my shot at Exceeds Expectations.
-I create the search form and button in this function
-*/
-const searchElements = () => {
-  const searchDiv = document.createElement("div");
-  searchDiv.className = "student-search";
+// This function creates the search form elements. 
+const searchOption = () => {
+  const searchDiv = document.createElement('div');
+  searchDiv.classList.add('student-search');
+  searchDiv.innerHTML = `<input placeholder="Search for Student"><button>Search</button>`;
   pageHeader.appendChild(searchDiv);
-  const searchField = document.createElement("input");
-  searchField.setAttribute("placeholder", "Search for Student");
-  searchField.setAttribute("id", "search-input");
-  searchDiv.appendChild(searchField);
-  const searchButton = document.createElement("button");
-  searchButton.textContent = "Search";
-  searchDiv.appendChild(searchButton);
 };
 
-// I set what will happen if no results are found in this function
-const noResults = () => {
-  const divNoResults = document.createElement("div");
-  divNoResults.classList.add("search-no-results");
-  divNoResults.style.display = "none";
-  divNoResults.innerHTML = `Sorry. No student found with that name. <a href="#">Reset Search</a>`;
-  pageClass.appendChild(divNoResults);
+// This function create the no search results when no students are found. 
+const noSearchResults = () => {
+  const noResultsDiv = document.createElement('div');
+  noResultsDiv.classList.add('no-search-results');
+  noResultsDiv.style.display = 'none';
+  noResultsDiv.innerHTML = `Sorry. No student found with that name. <a href="#">Reset Search</a>`;
+  pageElement.appendChild(noResultsDiv);
 };
 
-const noResultsShow = () => {
-  document.querySelector(".search-no-results").style.display = "block";
+// This function showes the text for when no search results were found. 
+const noSearchResultsShow = () => {
+  document.querySelector('.no-search-results').style.display = 'block';
 };
 
-const noResultsHide = () => {
-  document.querySelector(".search-no-results").style.display = "none";
+// This function hides the text for when no search results were found.
+const noSearchResultsHide = () => {
+  document.querySelector('.no-search-results').style.display = 'none';
 };
 
-// The function for the search
-const search = (searchValue = " ") => {
-  if(searchValue !== " "){
-    searchArray = [];
-    for (let i=0; i<students.length; i++){
-      const studentFilterName = (students[i].querySelector("h3").innerText.toLowerCase().indexOf(searchValue.toLowerCase()) > -1);
-      if(studentFilterName){
-        searchArray.push(students[i]);
-      }
-    }
-  } else {
-    searchArray = students;
-  }
-  console.log(searchValue);
-  showPage(1);
-  // appendPageLinks();
-};
+// Calles the functions.
+searchOption();
+noSearchResults();
+showPage(1);
+appendPageLinks();
 
-const resetSearch = () => {
-  search();
-  document.querySelector(".student-search input").value = "";
-};
-
-// Add an eventListener to handle the click event on the search button.
-pageHeader.addEventListener("click", (event) => {
-  if(event.target && event.target.nodeName == "BUTTON"){
-    search(event.target.inputValue);
-  }
-});
-
-// Add an eventListener to handle the keyup event on the search form.
-pageHeader.addEventListener("keyup", (event) => {
-  if(event.target && event.target.nodeName == "INPUT"){
+// Key up event listener to handle the key up event on the search form.
+pageHeader.addEventListener('keyup', (event) => {
+  if (event.target && event.target.nodeName == "INPUT") {
     search(event.target.value);
   }
 });
 
-// Add an eventListener to handle the reset link.
-pageClass.addEventListener("click", (event) => {
-  if(event.target && event.target.nodeName == "A" && event.target.parentElement.className === "search-no-results") {
-    resetSearch();
+// Button event listener to handle the click event on the search button.
+pageHeader.addEventListener('click', (event) => {
+  if (event.target && event.target.nodeName == "BUTTON") {
+    search(event.target.previousElementSibling.value);
   }
 });
 
-// Calling the functions
-showPage(1);
-appendPageLinks();
-noResults();
-searchElements();
-
-
-
-
+// Reset search event listener to handle the click event in the no search results.
+pageElement.addEventListener('click', (event) => {
+  if (event.target && event.target.nodeName == "A" && event.target.parentElement.className === 'no-search-results') {
+    searchReset();
+  }
+});
