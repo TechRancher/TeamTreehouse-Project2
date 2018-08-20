@@ -47,6 +47,11 @@ const search = (searchValue = '') => {
       const studentfilterName = (students[i].querySelector('h3').innerText.toLowerCase().indexOf(searchValue.toLowerCase()) > -1);
       if (studentfilterName) {
         searchResult.push(students[i]);
+      } 
+      if (students[i] >= perPage) {
+        divElement.style.display = "none";
+      } else {
+        divElement.style.display = "block";
       }
     }
   } else {
