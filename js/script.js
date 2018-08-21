@@ -48,7 +48,7 @@ const search = (searchValue = '') => {
       if (studentfilterName) {
         searchResult.push(students[i]);
       } 
-      if (students[i] >= perPage) {
+      if (searchResult.length <= perPage) {
         divElement.style.display = "none";
       } else {
         divElement.style.display = "block";
@@ -84,8 +84,9 @@ const appendPageLinks = () => {
     anchorCreate.href = "#";
     anchorCreate.textContent = i;
     liCreate.appendChild(anchorCreate);
-    const activeAnchor = document.querySelector("liCreate.firstChild");
-
+    const activeA = document.querySelectorAll("a")[0];
+    activeA.className = "active";
+      
     // Add an eventListener to handle the pageNum Button
     liCreate.addEventListener("click", (event) => {
       const pageButton = event.target.textContent;
@@ -102,6 +103,11 @@ const appendPageLinks = () => {
   divElement.appendChild(ulCreate);
   pageElement.appendChild(divElement);
 };
+
+const activePageBtn = () => {
+  const activeA = document.querySelectorAll("a")[0];
+  activeA.className = "active";
+}
 
 // This function creates the search form elements. 
 const searchOption = () => {
@@ -135,6 +141,7 @@ searchOption();
 noSearchResults();
 showPage(1);
 appendPageLinks();
+activePageBtn();
 
 // Key up event listener to handle the key up event on the search form.
 pageHeader.addEventListener('keyup', (event) => {
