@@ -7,6 +7,7 @@ const students = document.querySelectorAll(".student-item");
 const pageElement = document.querySelector(".page");
 const pageHeader = document.querySelector(".page-header");
 const divElement = document.createElement("div");
+const activeA = document.querySelector(".pagination li a");
 const perPage = 10;
 let searchResult = students;
 
@@ -69,7 +70,6 @@ const search = (searchValue = "") => {
 
 // This function resets the search form and page to page 1.
 const searchReset = () => {
-  onload
   search();
   document.querySelector(".student-search input").value = "";
 };
@@ -107,8 +107,10 @@ const appendPageLinks = () => {
   divElement.appendChild(ulCreate);
   pageElement.appendChild(divElement);
   // This function makes the page btn become active on page load
-  const activeA = document.querySelector(".pagination li a");
-  activeA.classList.add("active");
+  if (activeA) {
+    const activeA = document.querySelector(".pagination li a");
+    activeA.classList.add("active");
+  } 
 };
 
 // This function creates the search form elements.
@@ -128,7 +130,7 @@ const noSearchResults = () => {
   pageElement.appendChild(noResultsDiv);
 };
 
-// This function showes the text for when no search results were found.
+// This function shows the text for when no search results were found.
 const noSearchResultsShow = () => {
   document.querySelector(".no-search-results").style.display = "block";
 };
